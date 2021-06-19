@@ -128,7 +128,7 @@ export class WavelengthEC2 {
     SecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(22))
     SecurityGroup.addIngressRule(ec2.Peer.anyIpv6(), ec2.Port.tcp(22))
 
-    const WavelengthEC2 = new ec2.Instance(stack, subnet.availabilityZone + "_WavelengthEC2", {
+    const WavelengthEC2 = new ec2.Instance(stack, subnet.availabilityZone + "_WavelengthMEC", {
       instanceType: new ec2.InstanceType("t3.medium"),
       machineImage: new ec2.AmazonLinuxImage,
       vpc: vpc,
