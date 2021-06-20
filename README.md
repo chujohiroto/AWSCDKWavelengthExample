@@ -5,19 +5,21 @@ AWS CDKでWavelength環境を立ち上げるサンプルリポジトリです。
 
 ![リソース図](/awscdkwavelength.png)
 
-- VPC **172.20.0.0/16** (AwsCdkWavelengthExampleStack/TokyoRegion)
-- Subnet **172.20.0.0/26** (InternetZone_SubnetSubnet1)
-- EC2 (JumpEC2) (t2.micro)
-- Elastic IP(Public IP)
-- Subnet **172.20.0.64/26** (InternetZone_SubnetSubnet2)
-- Subnet **172.20.1.0/24** (Wavelength Tokyo) 
-- EC2 (Wavelength Tokyo MEC) (t3.medium)
-- Carrier IP (手動)
-- Subnet **172.20.2.0/24** (Wavelength Osaka) 
-- EC2 (Wavelength Osaka MEC) (t3.medium)
-- Carrier IP (手動)
-- Internet Gateway
-- Carrier Gateway
+```
+VPC **172.20.0.0/16** (AwsCdkWavelengthExampleStack/TokyoRegion)
+  Subnet **172.20.0.0/26** (InternetZone_SubnetSubnet1)
+    EC2 (JumpEC2) (t2.micro)
+    Elastic IP(Public IP)
+  Subnet **172.20.0.64/26** (InternetZone_SubnetSubnet2)
+  Subnet **172.20.1.0/24** (Wavelength Tokyo) 
+    EC2 (Wavelength Tokyo MEC) (t3.medium)
+      Carrier IP (手動)
+  Subnet **172.20.2.0/24** (Wavelength Osaka) 
+    EC2 (Wavelength Osaka MEC) (t3.medium)
+      Carrier IP (手動)
+  Internet Gateway
+  Carrier Gateway
+```
 
 ## Setup
 
@@ -56,7 +58,7 @@ Network Border GroupInfoを、**ap-northeast-1-wl1-nrt-wlz-1** または、**ap-
 
 このサンプルだと東京リージョンと大阪リージョンに属するEC2があるので、それぞれのNetwork Border GroupのキャリアIPが必要です。
 
-確保が終われば、[ここ](https://ap-northeast-1.console.aws.amazon.com/vpc/home?region=ap-northeast-1#Addresses:)から **Actions→Associate Elastic IP Address**で、EC2に割り当てます。
+確保が終われば、[このページ](https://ap-northeast-1.console.aws.amazon.com/vpc/home?region=ap-northeast-1#Addresses:)から **Actions→Associate Elastic IP Address**で、EC2に割り当てます。
 
 ## 削除する場合
 削除する場合は、以下のコマンドで削除できます。
