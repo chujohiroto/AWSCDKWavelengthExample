@@ -76,10 +76,10 @@ Network Border GroupInfoを、**ap-northeast-1-wl1-nrt-wlz-1** または、**ap-
 $ ssh -i keyPair.pem ec2-user@xx.xx.xx.xx(JumpEC2のElastic IP)
 ```
 
-その踏み台のサーバー内でSSH接続します。
+その踏み台のサーバー内でSSH接続します。手元のキーペアは適当にコピーしてください。
 
 ```
-$ssh -i keyPair.pem ec2-user@172.20.xx.xx(接続したいMECのPrivate IP)
+$ ssh -i keyPair.pem ec2-user@172.20.xx.xx(接続したいMECのPrivate IP)
 ```
 
 ## 削除する場合
