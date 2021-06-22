@@ -1,11 +1,12 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2'
-import { ISubnet } from '@aws-cdk/aws-ec2';
 
 export class AwsCdkWavelengthExampleStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-    // The code that defines your stack goes here
+
+    // Get the Key Pair
+    const key = this.node.tryGetContext('key_pair')
 
     const vpc = new ec2.Vpc(this, 'TokyoRegion', {
       cidr: "172.20.0.0/16",
@@ -21,13 +22,13 @@ export class AwsCdkWavelengthExampleStack extends cdk.Stack {
       vpcId: vpc.vpcId
     })
 
-    new JumpEC2(this, vpc, vpc.publicSubnets[0])
+    new JumpEC2(this, vpc, vpc.publicSubnets[0], key)
 
     const zoneNRT = new WavelengthNRTZone(this, vpc)
-    new WavelengthEC2(this, vpc, zoneNRT.subnet)
+    new WavelengthEC2(this, vpc, zoneNRT.subnet, key)
 
     const zoneKIX = new WavelengthKIXZone(this, vpc)
-    new WavelengthEC2(this, vpc, zoneKIX.subnet)
+    new WavelengthEC2(this, vpc, zoneKIX.subnet, key)
   }
 }
 
@@ -91,7 +92,7 @@ export class WavelengthKIXZone implements Zone {
 }
 
 export class JumpEC2 {
-  constructor(stack: cdk.Stack, vpc: ec2.Vpc, subnet: ISubnet) {
+  constructor(stack: cdk.Stack, vpc: ec2.Vpc, subnet: ec2.ISubnet, key: any) {
     const SecurityGroup = new ec2.SecurityGroup(stack, "JumpEC2_SecurityGroup", {
       vpc: vpc,
       securityGroupName: "JumpEC2_SecurityGroup"
@@ -107,7 +108,8 @@ export class JumpEC2 {
       machineImage: new ec2.AmazonLinuxImage,
       vpc: vpc,
       vpcSubnets: { subnets: [subnet] },
-      securityGroup: SecurityGroup
+      securityGroup: SecurityGroup,
+      keyName: key
     })
 
     const CareerIP = new ec2.CfnEIP(stack, "JumpEC2_CfnEIP", {
@@ -117,7 +119,7 @@ export class JumpEC2 {
 }
 
 export class WavelengthEC2 {
-  constructor(stack: cdk.Stack, vpc: ec2.Vpc, subnet: ISubnet) {
+  constructor(stack: cdk.Stack, vpc: ec2.Vpc, subnet: ec2.ISubnet, key: any) {
     const SecurityGroup = new ec2.SecurityGroup(stack, subnet.availabilityZone + "_WavelengthEC2_SecurityGroup", {
       vpc: vpc,
       securityGroupName: subnet.availabilityZone + "_WavelengthEC2_SecurityGroup"
@@ -133,7 +135,8 @@ export class WavelengthEC2 {
       machineImage: new ec2.AmazonLinuxImage,
       vpc: vpc,
       vpcSubnets: { subnets: [subnet] },
-      securityGroup: SecurityGroup
+      securityGroup: SecurityGroup,
+      keyName: key
     })
   }
 }

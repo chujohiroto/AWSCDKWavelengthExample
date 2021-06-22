@@ -45,9 +45,16 @@ Default region name [None]: ap-northeast-1
 Default output format [None]: 
 ```
 
-後はこのリポジトリをCloneして、以下のコマンドを実行するとデプロイできます。
+またSSHのkey pairを生成して、AWSにアップロードしておく必要があります。既に存在するキーペアを使う場合は以下のコマンドは飛ばしてください。
+
 ```
-$ cdk deploy
+aws ec2 create-key-pair --key-name wavelengthExample --query "KeyMaterial" --output text > keyPair.pem
+chmod 400 keyPair.pem
+```
+
+後はこのリポジトリをCloneして、以下のコマンドを実行するとデプロイできます。[既に存在するキーペア](https://ap-northeast-1.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-1#KeyPairs:)を使う場合は、以下のコマンドの**wavelengthExample**を書き換えてください。
+```
+$ cdk deploy -c key_pair=wavelengthExample
 ```
 
 デプロイしたのち、キャリアIPのみWeb Dashboardから手動で割り当てる必要があります。
@@ -59,6 +66,21 @@ Network Border GroupInfoを、**ap-northeast-1-wl1-nrt-wlz-1** または、**ap-
 このサンプルだと東京リージョンと大阪リージョンに属するEC2があるので、それぞれのNetwork Border GroupのキャリアIPが必要です。
 
 確保が終われば、[このページ](https://ap-northeast-1.console.aws.amazon.com/vpc/home?region=ap-northeast-1#Addresses:)から **Actions→Associate Elastic IP Address**で、EC2に割り当てます。
+
+## SSH接続
+もしSSHクライアントがKDDIのモバイル網につながっている場合は、直接MECに対してSSHすることができます。
+
+ただしそうでない場合、作成したJumpEC2を踏み台にして接続する必要があります。
+
+```
+$ ssh -i keyPair.pem ec2-user@xx.xx.xx.xx(JumpEC2のElastic IP)
+```
+
+その踏み台のサーバー内でSSH接続します。
+
+```
+$ssh -i keyPair.pem ec2-user@172.20.xx.xx(接続したいMECのPrivate IP)
+```
 
 ## 削除する場合
 削除する場合は、以下のコマンドで削除できます。
